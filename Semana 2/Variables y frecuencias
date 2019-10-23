@@ -1,0 +1,870 @@
+#Practica 2 - Variables y Frecuencias
+
+
+#Para empezar …
+#Diferentes tipos de datos (observaciones) pueden ser tomados desde la naturaleza, como medidas, conteos, caracteres, rasgos, entre otras. Cuando un conjunto de datos de un mismo tipo y que podría variar, en función de algo, de población a población, se le denomina variable.
+
+#Estas variables se dividen según la naturaleza de los datos: Cualitativas (nominal, binaria, ordinaria) y cuantitativas (discreta y continua).
+
+#A esta clarificación podemos agregar un tipo adicional denominado derivadas (Ver: Sokal & Rohlf 1995), las cuales son computadas a partir de dos o más variables medidas de manera independiente. Dentro de estas podemos encontrar razones, porcentajes, tasas e índices.
+
+#Variables en R
+#Los paquetes en R ofrecen una gran variedad de conjuntos de datos, para acceder a ellos podemos utilizar la función data
+
+# Ver los set de datos para los paquetes cargado actualmente
+
+data()
+
+# Ver los set de datos para todos los paquetes instalados
+
+data(package = .packages(all.available = TRUE))
+
+## Warning in data(package = .packages(all.available = TRUE)): datasets have
+## been moved from package 'base' to package 'datasets'
+## Warning in data(package = .packages(all.available = TRUE)): datasets have
+## been moved from package 'stats' to package 'datasets'
+
+#Para poder acceder a algunos datos que usaremos el resto de prácticas debemos primero instalar/cargar algunos paquetes.
+
+library(ape)
+library(permute)
+library(vegan)
+
+## Loading required package: lattice
+## This is vegan 2.5-5
+
+library(ade4)
+library(geiger)
+
+## Registered S3 method overwritten by 'geiger':
+##   method            from
+##   unique.multiPhylo ape
+
+#Algunas tablas de datos que vienen por defecto en estos paquetes:
+# Paquete ape
+data(carnivora)
+
+#Paquete permute
+data(jackal)
+
+#Paquete vegan
+data(jackal)
+
+data(BCI)
+
+data(mite.env)
+
+#Paquete ade4
+data(atlas)
+
+data(carniherbi49)
+
+data(corvus)
+
+data(tortues)
+
+#Paquete geiger
+data(geospiza)
+
+#Si no logra descargar los paquetes con éxito, yo descargué cada set de datos y los guardé en objetos .RData. usted solo debe cargarlos usando la funcion load()
+
+# Paquete ape
+# data(carnivora)
+# save(carnivora,file = 'Files/carnivora.RData')
+load('Files/carnivora.RData')
+
+#Paquete permute
+# data(jackal)
+# save(jackal, file = 'Files/jackal.RData')
+load('Files/jackal.RData')
+
+#Paquete vegan
+
+# data(BCI)
+# save(BCI, file = 'Files/BCI.RData')
+load('Files/BCI.RData')
+
+# data(mite.env)
+# save(mite.env, file = 'Files/mite.env.RData')
+load('Files/mite.env.RData')
+
+#Paquete ade4
+# data(atlas)
+# save(atlas, file = 'Files/atlas.RData')
+load('Files/atlas.RData')
+
+# data(corvus)
+# save(corvus, file = 'Files/corvus.RData')
+load('Files/corvus.RData')
+
+# data(tortues)
+# save(tortues, file = 'Files/tortues.RData')
+load('Files/tortues.RData')
+
+#Paquete geiger
+# data(geospiza)
+# save(geospiza, file = 'Files/geospiza.RData')
+load('Files/geospiza.RData')
+
+#Ejercicio: ¿Que clase de objeto es BIC? ¿Qué clase de objeto es geospiza? use la función str para obtener información sobre la estructura.
+
+class(BIC)
+#[1] "function"
+
+class(geospiza)
+#[1] "list"
+
+str(BIC)
+#function (object, ...) 
+
+str(geospiza)
+
+#List of 4
+#$ geospiza.tree:List of 4
+#..$ edge       : num [1:26, 1:2] 15 16 17 18 19 20 21 22 23 24 #...
+#..$ edge.length: num [1:26] 0.2974 0.0492 0.0686 0.134 0.1035 ##...
+#..$ Nnode      : int 13
+#..$ tip.label  : chr [1:14] "fuliginosa" "fortis" "magnirostris" "conirostris" ...
+#..- attr(*, "class")= chr "phylo"
+#$ geospiza.data: num [1:13, 1:5] 4.4 4.35 4.22 4.26 4.24 ...
+#..- attr(*, "dimnames")=List of 2
+#.. ..$ : chr [1:13] "magnirostris" "conirostris" "difficilis" #"scandens" ...
+#.. ..$ : chr [1:5] "wingL" "tarsusL" "culmenL" "beakD" ...
+#$ phy          :List of 4
+#..$ edge       : num [1:26, 1:2] 15 16 17 18 19 20 21 22 23 24 #...
+#..$ edge.length: num [1:26] 0.2974 0.0492 0.0686 0.134 0.1035 ##...
+#..$ Nnode      : int 13
+#..$ tip.label  : chr [1:14] "fuliginosa" "fortis" "magnirostris" "conirostris" ...
+#..- attr(*, "class")= chr "phylo"
+#$ dat          : num [1:13, 1:5] 4.4 4.35 4.22 4.26 4.24 ...
+#..- attr(*, "dimnames")=List of 2
+#.. ..$ : chr [1:13] "magnirostris" "conirostris" "difficilis" "scandens" ...
+#.. ..$ : chr [1:5] "wingL" "tarsusL" "culmenL" "beakD" ...
+
+#Los objetos tipo list, son objeto que contienen diferentes tipos y clases de objetos dentro. Por ejemplo geospiza contiene 4 objetos internos, el primero es un árbol filogenético, el segundo es  un data.frame, el tercero es un árbol filgenético y el último un data.frame.
+
+# ¿Qué es geospiza?
+
+help("geospiza")
+
+#Recuerda ¿qué se dijo sobre objetos S3?, este tipo de listas se navegan igual que un data.frame.
+
+# Para acceder al segundo objeto solo hay que mirar la estructura
+
+geospiza$geospiza.data
+
+#wingL  tarsusL  culmenL    beakD   gonysW
+#magnirostris 4.404200 3.038950 2.724667 2.823767 2.675983
+#conirostris  4.349867 2.984200 2.654400 2.513800 2.360167
+#difficilis   4.224067 2.898917 2.277183 2.011100 1.929983
+#scandens     4.261222 2.929033 2.621789 2.144700 2.036944
+#fortis       4.244008 2.894717 2.407025 2.362658 2.221867
+#fuliginosa   4.132957 2.806514 2.094971 1.941157 1.845379
+#pallida      4.265425 3.089450 2.430250 2.016350 1.949125
+#fusca        3.975393 2.936536 2.051843 1.191264 1.401186
+#parvulus     4.131600 2.973060 1.974420 1.873540 1.813340
+#pauper       4.232500 3.035900 2.187000 2.073400 1.962100
+#Pinaroloxias 4.188600 2.980200 2.311100 1.547500 1.630100
+#Platyspiza   4.419686 3.270543 2.331471 2.347471 2.282443
+#psittacula   4.235020 3.049120 2.259640 2.230040 2.073940
+
+# Para extraer un objeto dentro de esta tabla solo hay que asignar la posición
+
+geospiza$geospiza.data[,1]
+
+#magnirostris  conirostris   difficilis     scandens       fortis 
+#4.404200     4.349867     4.224067     4.261222     4.244008 
+#fuliginosa      pallida        fusca     parvulus       pauper 
+#4.132957     4.265425     3.975393     4.131600     4.232500 
+#Pinaroloxias   Platyspiza   psittacula 
+#4.188600     4.419686     4.235020 
+
+#Ejercicio: ¿Qué tipo de variable es tarsusL y qué clase? 
+
+#Abra el objeto tortues y mire ¿Qué tipo de variables tiene y qué clase son?, haga lo mismo con el objeto mite.env y revise ¿Qué tipo de variable es shurb y qué clase es? Recuerde siempre usar help para saber de donde vienen los datos.
+
+?tarsusL
+
+typeof (geospiza$geospiza.data[, 2])
+#[1] "double"
+
+class(geospiza$geospiza.data[,2])
+#"numeric"
+
+geospiza
+
+
+typeof (tortues)
+class(tortues)
+#"data.frame"
+
+tortues
+
+mite.env$Arbusto
+
+typeof(mite.env $ Arbusto)
+
+class(mite.env)
+#"data.frame"
+
+mite.env
+
+#Podemos generar variables computadas a partir de variables medidas independientemente. Por ejemplo, mirar la proporción de sexos de un muestreo.
+
+# Semilla
+set.seed(1)
+
+#sexos
+sex <- c('F', 'M')
+
+sex
+
+## [1] "F" "M"
+# Inventemos una muestra con las mismas probabilidades de sacar un Macho o una Hembra
+
+pop1 <- sample(x = sex, size = 50,replace = T,prob = c(0.5,0.5))
+
+pop1 
+##  [1] "M" "M" "F" "F" "M" "F" "F" "F" "F" "M" "M" "M" "F" "M" "F" "M" "F"
+## [18] "F" "M" "F" "F" "M" "F" "M" "M" "M" "M" "M" "F" "M" "M" "F" "M" "M"
+## [35] "F" "F" "F" "M" "F" "M" "F" "F" "F" "F" "F" "F" "M" "M" "F" "F"
+
+# imaginemos que pop1 es real y queremos saber cuál es la razón de sexos en la muestra
+
+M <- length(which(pop1 == 'M'))
+
+M
+
+## [1] 23
+
+F <- length(which(pop1 == 'F'))
+
+F
+## [1] 27
+
+# la razón es
+
+paste(F,'/',M,sep = '')
+
+## [1] "27/23"
+# 0
+
+F/M
+## [1] 1.173913
+
+#Qué pasaría si en el sitio encontráramos más hembras qué machos.
+
+
+# Semilla
+set.seed(1)
+
+#sexos
+sex <- c('F', 'M')
+
+sex
+## [1] "F" "M"
+
+# Inventemos una muestra con las mismas probabilidades de sacar un Macho o una Hembra
+
+pop2 <- sample(x = sex, size = 50,replace = T,prob = c(0.8,0.2))
+
+pop2
+
+##  [1] "F" "F" "F" "M" "F" "M" "M" "F" "F" "F" "F" "F" "F" "F" "F" "F" "F"
+## [18] "M" "F" "F" "M" "F" "F" "F" "F" "F" "F" "F" "M" "F" "F" "F" "F" "F"
+## [35] "M" "F" "F" "F" "F" "F" "M" "F" "F" "F" "F" "F" "F" "F" "F" "F"
+
+# imaginemos que pop1 es real y queremos saber cuál es la razón de sexos en la muestra
+
+M <- length(which(pop1 == 'M'))
+
+M
+
+## [1] 23
+F <- length(which(pop1 == 'F'))
+
+F
+
+## [1] 27
+# la razón es
+
+paste(F,'/',M,sep = '')
+
+## [1] "27/23"
+# 0
+
+F/M
+## [1] 1.173913
+
+#Ejercicio: usando el data.frame tortues calcule la proporción de hembras y machos de la muestra
+
+proporcion<-muestra(x=sexo, tamaño=48,reemplazar=T,problema=c(0.5,0.5))
+
+proporcion 
+
+#También podemos generar la proporción entre dos medidas, por ejemplo el ancho y el largo para obtener una variable derivada que represente la forma.
+
+# Imaginemos que tomamos medidas de cráneos de lagarto
+
+Ancho<-rnorm(n = 32,mean = 10,sd = 1)
+
+Ancho
+
+#[1]  9.943871  9.844204  8.529248  9.521850
+#[5] 10.417942 11.358680  9.897212 10.387672
+#[9]  9.946195  8.622940  9.585005  9.605710
+#[13]  9.940687 11.100025 10.763176  9.835476
+#[17]  9.746638 10.696963 10.556663  9.311244
+#[21]  9.292505 10.364582 10.768533  9.887654
+#[25] 10.881108 10.398106  9.387974 10.341120
+#[29]  8.870637 11.433024 11.980400  9.632779
+
+Largo <- rnorm(n = 32,mean = 15,sd = 1)
+Largo
+
+#[1] 13.95587 15.56972 14.86495 17.40162 14.96076
+#[6] 15.68974 15.02800 14.25673 15.18879 13.19504
+#[11] 16.46555 15.15325 17.17261 15.47551 14.29005
+#[16] 15.61073 14.06590 13.74637 15.29145 14.55671
+#[21] 15.00111 15.07434 14.41048 14.43133 14.86482
+#[26] 16.17809 13.47643 15.59395 15.33295 16.06310
+#[31] 14.69582 15.37002
+
+# Construimos la tabla con medidas imaginarias
+
+medidas<-cbind(Ancho, Largo)
+
+medidas
+
+#Ancho    Largo
+#[1,]  9.943871 13.95587
+#[2,]  9.844204 15.56972
+#[3,]  8.529248 14.86495
+#[4,]  9.521850 17.40162
+#[5,] 10.417942 14.96076
+#[6,] 11.358680 15.68974
+#[7,]  9.897212 15.02800
+#[8,] 10.387672 14.25673
+#[9,]  9.946195 15.18879
+#[10,]  8.622940 13.19504
+#[11,]  9.585005 16.46555
+#[12,]  9.605710 15.15325
+#[13,]  9.940687 17.17261
+#[14,] 11.100025 15.47551
+#[15,] 10.763176 14.29005
+#[16,]  9.835476 15.61073
+#[17,]  9.746638 14.06590
+#[18,] 10.696963 13.74637
+#[19,] 10.556663 15.29145
+#[20,]  9.311244 14.55671
+#[21,]  9.292505 15.00111
+#[22,] 10.364582 15.07434
+#[23,] 10.768533 14.41048
+#[24,]  9.887654 14.43133
+#[25,] 10.881108 14.86482
+#[26,] 10.398106 16.17809
+#[27,]  9.387974 13.47643
+#[28,] 10.341120 15.59395
+#[29,]  8.870637 15.33295
+#[30,] 11.433024 16.06310
+#[31,] 11.980400 14.69582
+#[32,]  9.632779 15.37002
+
+Tabla_medidas <- as.data.frame(cbind(paste('spp',1:32,sep = '_'),medidas))
+
+# tabla sin colnames
+
+Tabla_medidas
+
+#V1            Ancho            Largo
+#1   spp_1   9.943871260471 13.9558653736835
+#2   spp_2 9.84420449329467 15.5697196274424
+#3   spp_3 8.52924761610073 14.8649453961192
+#4   spp_4 9.52184994489138 17.4016177605048
+#5   spp_5 10.4179415601997 14.9607599972668
+#6   spp_6  11.358679551529 15.6897393624508
+#7   spp_7   9.897212272657 15.0280021587807
+#8   spp_8 10.3876716115594 14.2567267911176
+#9   spp_9  9.9461949594171 15.1887922995143
+#10 spp_10 8.62294044317139  13.195041371109
+#11 spp_11 9.58500543670032 16.4655548615629
+#12 spp_12 9.60571004628965 15.1532533382119
+#13 spp_13 9.94068660328881 17.1726116703622
+#14 spp_14 11.1000253719839 15.4755095288997
+#15 spp_15 10.7631757484575 14.2900535690782
+#16 spp_16 9.83547640374641 15.6107263534891
+#17 spp_17 9.74663831986349 14.0659023683557
+#18 spp_18 10.6969633754047 13.7463665997609
+#19 spp_19 10.5566631986737 15.2914462355175
+#20 spp_20 9.31124430545048 14.5567081267816
+#21 spp_21 9.29250484303788 15.0011053516316
+#22 spp_22 10.3645819621368 15.0743413241517
+#23 spp_23 10.7685329245154 14.4104790538119
+#24 spp_24 9.88765378784977 14.4313312671815
+#25 spp_25 10.8811077264542 14.8648213848762
+#26 spp_26 10.3981058803671 16.1780869965732
+#27 spp_27 9.38797360674923 13.4764331995702
+#28 spp_28 10.3411196914244 15.5939461876284
+#29 spp_29 8.87063690391921 15.3329503712135
+#30 spp_30  11.433023701701 16.0630998372764
+#31 spp_31 11.9803998985059 14.6958160763657
+#32 spp_32 9.63277852353349 15.3700188099163
+
+# asigne nombres a las columnas
+
+colnames(Tabla_medidas) <- c('Individuos','Ancho','Largo')
+
+Tabla_medidas
+
+##    Individuos            Ancho            Largo
+
+## 1       spp_1   9.943871260471 13.9558653736835
+## 2       spp_2 9.84420449329467 15.5697196274424
+## 3       spp_3 8.52924761610073 14.8649453961192
+## 4       spp_4 9.52184994489138 17.4016177605048
+## 5       spp_5 10.4179415601997 14.9607599972668
+## 6       spp_6  11.358679551529 15.6897393624508
+## 7       spp_7   9.897212272657 15.0280021587807
+## 8       spp_8 10.3876716115594 14.2567267911176
+## 9       spp_9  9.9461949594171 15.1887922995143
+## 10     spp_10 8.62294044317139  13.195041371109
+## 11     spp_11 9.58500543670032 16.4655548615629
+## 12     spp_12 9.60571004628965 15.1532533382119
+## 13     spp_13 9.94068660328881 17.1726116703622
+## 14     spp_14 11.1000253719839 15.4755095288997
+## 15     spp_15 10.7631757484575 14.2900535690782
+## 16     spp_16 9.83547640374641 15.6107263534891
+## 17     spp_17 9.74663831986349 14.0659023683557
+## 18     spp_18 10.6969633754047 13.7463665997609
+## 19     spp_19 10.5566631986737 15.2914462355175
+## 20     spp_20 9.31124430545048 14.5567081267816
+## 21     spp_21 9.29250484303788 15.0011053516316
+## 22     spp_22 10.3645819621368 15.0743413241517
+## 23     spp_23 10.7685329245154 14.4104790538119
+## 24     spp_24 9.88765378784977 14.4313312671815
+## 25     spp_25 10.8811077264542 14.8648213848762
+## 26     spp_26 10.3981058803671 16.1780869965732
+## 27     spp_27 9.38797360674923 13.4764331995702
+## 28     spp_28 10.3411196914244 15.5939461876284
+## 29     spp_29 8.87063690391921 15.3329503712135
+## 30     spp_30  11.433023701701 16.0630998372764
+## 31     spp_31 11.9803998985059 14.6958160763657
+## 32     spp_32 9.63277852353349 15.3700188099163
+
+# Relación ancho/largo
+
+prp <- Ancho/Largo
+
+prp 
+
+##  [1] 0.7125227 0.6322660 0.5737826 0.5471819 0.6963511 0.7239559 0.6585847
+##  [8] 0.7286155 0.6548378 0.6534986 0.5821247 0.6339041 0.5788687 0.7172640
+## [15] 0.7531935 0.6300460 0.6929266 0.7781666 0.6903639 0.6396532 0.6194547
+## [22] 0.6875645 0.7472710 0.6851519 0.7320039 0.6427278 0.6966215 0.6631496
+## [29] 0.5785342 0.7117570 0.8152252 0.6267252
+
+Tabla_medidas_prp <- cbind.data.frame(Tabla_medidas, prp)
+
+Tabla_medidas_prp 
+
+
+##    Individuos            Ancho            Largo       prp
+## 1       spp_1   9.943871260471 13.9558653736835 0.7125227
+## 2       spp_2 9.84420449329467 15.5697196274424 0.6322660
+## 3       spp_3 8.52924761610073 14.8649453961192 0.5737826
+## 4       spp_4 9.52184994489138 17.4016177605048 0.5471819
+## 5       spp_5 10.4179415601997 14.9607599972668 0.6963511
+## 6       spp_6  11.358679551529 15.6897393624508 0.7239559
+## 7       spp_7   9.897212272657 15.0280021587807 0.6585847
+## 8       spp_8 10.3876716115594 14.2567267911176 0.7286155
+## 9       spp_9  9.9461949594171 15.1887922995143 0.6548378
+## 10     spp_10 8.62294044317139  13.195041371109 0.6534986
+## 11     spp_11 9.58500543670032 16.4655548615629 0.5821247
+## 12     spp_12 9.60571004628965 15.1532533382119 0.6339041
+## 13     spp_13 9.94068660328881 17.1726116703622 0.5788687
+## 14     spp_14 11.1000253719839 15.4755095288997 0.7172640
+## 15     spp_15 10.7631757484575 14.2900535690782 0.7531935
+## 16     spp_16 9.83547640374641 15.6107263534891 0.6300460
+## 17     spp_17 9.74663831986349 14.0659023683557 0.6929266
+## 18     spp_18 10.6969633754047 13.7463665997609 0.7781666
+## 19     spp_19 10.5566631986737 15.2914462355175 0.6903639
+## 20     spp_20 9.31124430545048 14.5567081267816 0.6396532
+## 21     spp_21 9.29250484303788 15.0011053516316 0.6194547
+## 22     spp_22 10.3645819621368 15.0743413241517 0.6875645
+## 23     spp_23 10.7685329245154 14.4104790538119 0.7472710
+## 24     spp_24 9.88765378784977 14.4313312671815 0.6851519
+## 25     spp_25 10.8811077264542 14.8648213848762 0.7320039
+## 26     spp_26 10.3981058803671 16.1780869965732 0.6427278
+## 27     spp_27 9.38797360674923 13.4764331995702 0.6966215
+## 28     spp_28 10.3411196914244 15.5939461876284 0.6631496
+## 29     spp_29 8.87063690391921 15.3329503712135 0.5785342
+## 30     spp_30  11.433023701701 16.0630998372764 0.7117570
+## 31     spp_31 11.9803998985059 14.6958160763657 0.8152252
+## 32     spp_32 9.63277852353349 15.3700188099163 0.6267252
+
+#Ejercicio: usando el data.frame tortues calcule la proporción entre el ancho y el largo del caparazón, genere una tabla con la información de tortues y la nueva variable derivada.
+
+#Tenga en cuenta que no todo puede ser expresado en términos de variables derivadas. Generalmente, este tipo de variables tienen más desventajas que ventajas. ( Ver Sokal & Rohlf 1995, cap 2)
+
+medidas<-cbind (tortues [, 1], tortues [, 2])
+
+medidas
+
+Tabla_medidas <-as.data.frame(cbind(paste('spp',1:48,sep='_'),medidas))
+
+Tabla_medidas
+
+colnames(Tabla_medidas)<-c('Individuos','Ancho','Largo')
+
+Tabla_medidas
+
+# Relación ancho / largo
+
+prp<-tortues[,1]/tortues[,2]
+
+prp 
+
+Tabla_medidas_prp<-cbind.data.frame(Tabla_medidas,prp)
+
+Tabla_medidas_prp 
+
+#Tablas
+#Una herramienta útil para ver la frecuencia o el conteo de una variable es la función table; adicionalmente, podemos obtener la fracción de cada objeto con relación al total del muestreo.
+
+# Conteo o frecuencia
+
+freq<-table(mite.env$Substrate)
+
+freq
+
+
+##   Sphagn1   Sphagn2   Sphagn3   Sphagn4    Litter  Barepeat Interface 
+##        25        11         1         2         2         2        27
+
+# Fracción
+
+prop.table(freq)
+
+## 
+##    Sphagn1    Sphagn2    Sphagn3    Sphagn4     Litter   Barepeat 
+## 0.35714286 0.15714286 0.01428571 0.02857143 0.02857143 0.02857143 
+##  Interface 
+## 0.38571429
+# Las proporciones pueden  ser visualizadas usando la función *pie*
+
+pie(prop.table(freq))
+
+#Ejer: ¿Cuántas especies de Corvus fueron muestreadas en la región Paleártica-Africana? Use el data.frame del género Corvus. ¿Qué porcentaje de Corvus muestreados habitan zonas abiertas
+
+freq<-table(corvus$phylog)
+
+freq
+
+#amer orien  pale 
+#6    13     9 
+
+prop.table (freq)
+
+#amer     orien      pale 
+#0.2142857 0.4642857 0.3214286 
+
+
+pie (prop.table (freq))
+
+Freq<-tabla(corvus$habitat)
+
+prop.table(Freq)
+
+#Distribución de frecuencias
+#La distribución de frecuencias  es el sumatorio de las ocurrencias de los datos clasificados en categorías no solapadas. Cuando las variables son categóricas podemos graficar barras que permitan ver la frecuencia de cada objeto.
+
+# Sustrato de Orbatidos
+
+# freq era la tabla de frecuencias construida anteriormente
+#freq
+## 
+##   Sphagn1   Sphagn2   Sphagn3   Sphagn4    Litter  Barepeat Interface 
+##        25        11         1         2         2         2        27
+#mite.env$Substrate
+##  [1] Sphagn1   Litter    Interface Sphagn1   Sphagn1   Sphagn1   Sphagn1  
+##  [8] Interface Litter    Sphagn1   Sphagn3   Sphagn1   Sphagn1   Interface
+## [15] Interface Interface Interface Sphagn1   Interface Interface Sphagn4  
+## [22] Sphagn1   Sphagn2   Interface Interface Sphagn4   Sphagn1   Sphagn2  
+## [29] Interface Sphagn2   Sphagn2   Interface Sphagn2   Interface Sphagn1  
+## [36] Sphagn1   Interface Interface Sphagn2   Interface Sphagn2   Interface
+## [43] Interface Barepeat  Interface Sphagn1   Interface Sphagn1   Sphagn2  
+## [50] Interface Sphagn2   Sphagn1   Interface Sphagn2   Interface Interface
+## [57] Barepeat  Sphagn1   Sphagn1   Sphagn2   Interface Interface Interface
+## [64] Sphagn1   Sphagn1   Sphagn1   Sphagn1   Sphagn1   Sphagn1   Sphagn1  
+## Levels: Sphagn1 Sphagn2 Sphagn3 Sphagn4 Litter Barepeat Interface
+# Gráficar las frecuencias de cada sustrato
+#plot(freq)
+
+#Ejercicio: ¿Cómo luce el gráfico de frecuencias para los tipos de hábitat del género Corvus?
+
+plot (freq2, main = "Frecuencias para los tipos de hábitat de Corvus", xlab = "Tipo de hábitat", ylab = "Frecuencia",col = c ("# 26828EFF", "# FDE725FF"))
+
+#Pero si las variables son cuantitativas, los valores deben ser dispuestos en rangos que permitan observar el comportamiento de las frecuencias.
+
+#Primero, debemos generar una tabla de frecuencias
+
+# Sumar las ocurrencias de cada especie
+
+atlas$birds
+
+xsp<- apply(atlas$birds,2,sum)
+
+# Preguntar cuál es el mínimo 
+min(xsp)
+## [1] 2
+
+which.min(xsp)
+## Fauvette_melanocephale 
+##                      8
+
+xsp[which.min(xsp)]
+## Fauvette_melanocephale 
+##                      2
+
+# podríamos generar vectores
+
+min(xsp)
+## [1] 2
+x <- which.min(xsp)
+
+
+xsp[x]
+## Fauvette_melanocephale 
+##                      2  
+
+#Ejercicio: encuentre el máximo, así como lo hizo para el mínimo
+
+#Preguntar cuál es el el máximo
+
+xsp<-aplicar(atlas$birds,2,sum)
+max(xsp)
+#[1] 56
+
+#El máximo corresponde a 56
+
+## Fauvette_des_jardins 
+##                    2
+## Fauvette_des_jardins 
+##                   56
+
+#Cuando hablamos de variables de medida como longitud ancho etc, podemos hacer lo mismo pero organizando los valores en rangos.
+
+# Longitud de las tortugas
+
+tortues$long
+##  [1]  93  94  96 101 102 103 104 106 107 112 113 114 116 117 117 119 120
+## [18] 120 121 125 127 128 131 135  98 103 103 105 109 123 123 133 133 133
+## [35] 134 136 137 138 141 147 149 153 155 155 158 159 162 177
+# no tendría sentido, debemos organizar en rangos
+
+table(tortues$long)
+## 
+##  93  94  96  98 101 102 103 104 105 106 107 109 112 113 114 116 117 119 
+##   1   1   1   1   1   1   3   1   1   1   1   1   1   1   1   1   2   1 
+## 120 121 123 125 127 128 131 133 134 135 136 137 138 141 147 149 153 155 
+##   2   1   2   1   1   1   1   3   1   1   1   1   1   1   1   1   1   2 
+## 158 159 162 177 
+##   1   1   1   1
+
+# Preguntar cuál es el mínimo 
+
+min(tortues$long)
+## [1] 93
+
+# Preguntar cuál es el máximo
+
+max(tortues$long)
+## [1] 177
+
+# La función rangos nos permite ver directamente el rango
+
+range(tortues$long)
+## [1]  93 177
+
+#Dado que el máximo es 177 y el mínimo es 93, Podríamos decir que nuestra muestra estaría en un rango de 92.5 a 177.5
+
+#Podemos crear una lista de rangos a partir de esta información
+
+# genere las cajas
+
+bins <- seq(92.5,182.5, 10)
+
+# Agrupe los datos en las cajas
+
+datos<- cut(tortues$long,bins)
+
+# genere la tabla de frecuencias
+freq_long<-table(datos)
+
+# Usamos transfrom para generar un data.frame de frecuencias
+transform(freq_long)
+
+##        datos Freq
+## 1 (92.5,102]    6
+## 2  (102,112]    9
+## 3  (112,122]    9
+## 4  (122,132]    6
+## 5  (132,142]    9
+## 6  (142,152]    2
+## 7  (152,162]    6
+## 8  (162,172]    0
+## 9  (172,182]    1
+# Podemos usarlo para adicionar más información a cada rango. Freq es una variable interna 
+# generada a partir de transform(freq_long)
+
+transform(freq_long, Relativ= prop.table(Freq), Acum= cumsum(Freq))
+
+##        datos Freq    Relativ Acum
+## 1 (92.5,102]    6 0.12500000    6
+## 2  (102,112]    9 0.18750000   15
+## 3  (112,122]    9 0.18750000   24
+## 4  (122,132]    6 0.12500000   30
+## 5  (132,142]    9 0.18750000   39
+## 6  (142,152]    2 0.04166667   41
+## 7  (152,162]    6 0.12500000   47
+## 8  (162,172]    0 0.00000000   47
+## 9  (172,182]    1 0.02083333   48
+
+#Para poder visualizar estos datos, nosotros podemos asignar el vector crudo a la función hist o utilizar los rangos generados anteriormente.
+
+
+# Histograma a partir de datos crudos
+
+hist(tortues$long)
+
+# Histograma definiendo las cajas 
+
+hist(tortues$long, breaks = bins, main = 'Longitudes de caparazón')
+
+#Ejercicio: Repita el ejercicio para las variables continuas de tamaño de pico y tamaño del ala en el género Corvus. Busque cómo cambiar colores, ejes y algunas propiedades que le permitan mejorar el diseño del histograma.
+
+#Tamaño de picos:
+
+rango(corvus$bill)
+#[1] 45 85
+
+c<-seq(45,85,10)
+a<-corte(corvus$bill,c)
+f_pic<-table(a)
+transformar (f_pic)
+
+#histograma
+hist (corvus$bill, breaks=c, main="Longitudes picos Corvus", xlab ="Longitud", ylab ="Frecuencia", col= c("#F1765DFF", "# FD1866FF", "# FEC90DFF"," # FCFDBFFF"))
+
+#Para el tamaño del ala:
+min (tam_ala)
+#[1] 226
+
+max (tam_ala)
+#[1] 473
+
+rango (tam_ala)
+#[1] 226 473
+
+C2<-seq (225.5, 485.5, 10)
+
+datos_alas<-cut (corvus$wing,C2)
+freq_alas<-table(datos_alas)
+transformar (freq_alas)
+
+#histograma:
+hist (corvus$wing, breaks=C2, main = 'Tamaño del ala Corvus', xlab = "Tamaño", ylab = "Frecuencia", col = c ("rainbow"))
+
+#Invente unos datos de medidas, como se hizo en el caso de los cráneos, y genere todo el ejercicio hasta el histograma. Busque otro tipo de distribuciones para generar las variables ejemplo. Busque en qué casos sirve cada distribución o para qué se usan.
+
+Anchot<-rnorm (90,57,1)
+Anchot
+
+Largot<-rnorm (90,167,2)
+Largot
+
+medidas_tronco<-cbind (Anchot, Largot)
+medidas_tronco
+
+Tabla_medidas<-as.data.frame (cbind (paste ('spp', 1: 90, sep ='_'), medidas_tronco))
+colnames (Tabla_medidas) <- c ("Individuos", "Ancho tronco", "Largo tronco")
+Tabla_medidas
+
+Relacion<-Anchot/Largot
+
+Tabla_medidas<-cbind.data.frame (Tabla_medidas, Relacion)
+Tabla_medidas
+
+freq<-table(Tabla_medidas$`Ancho del tronco`)
+freq
+
+prop.table (freq)
+
+################################
+
+clase (Tabla_medidas$`Ancho del tronco`)
+#[1] "factor"
+
+Tabla_medidas$`Ancho del tronco`<-as.numeric (as.character (Tabla_medidas_tronco $` Ancho del tronco`))
+min (Tabla_medidas$`Ancho del tronco`)
+#[1] 54.83826
+
+max (Tabla_medidas$`Ancho del tronco`)
+#[1] 60.16578
+
+range (Tabla_medidas_tronco$`Ancho del tronco`)
+#[1] 54.83826 60.16578
+
+ct<-seq (54.83826,60.16578,2)
+
+dt<-cut (Tabla_medidas$`Ancho del tronco`,ct)
+
+freq_ancho <-table (datost)
+
+transformar (freq_ancho)
+transform (freq_ancho, Relativ = prop.table (Freq), Acum = cumsum (Freq))
+
+#histograma 
+hist (Tabla_medidas$`Ancho del tronco`, main="Ancho del tronco de arboles", col=c("rainbow"), xlab = "Ancho cm", ylab="Frecuencia")
+
+##Busque en qué casos sirve cada distribución o para qué se usan.
+
+
+# Distribución binomial
+
+#A la función de probabilidad de una variable aleatoria X, resultado de contar el número de éxitos al repetir n veces una experiencia aleatoria dicotómica con probabilidad de éxito p la llamamos distribución binomial y la representamos por B (n, p)
+
+# Distribución poisson
+
+#Los éxitos buscados son expresados por unidad de área, tiempo, pieza:
+
+- # de defectos de una tela por m2
+  
+  - # de aviones que aterrizan en un aeropuerto por día, hora, minuto, etc., etc.
+  
+  - # de bacterias por cm2 de cultivo
+  
+  - # de llamadas telefónicas a un conmutador por hora, minuto, etc., etc.
+  
+  - # de llegadas de embarcaciones a un puerto por día, mes, etc., etc.
+  
+  
+  # Distribución hipergeométrica
+  
+  # útil en casos en los que se extrae una muestra o se experimenta experiencias repetidas sin devolución del elemento que fue extraído, es decir que no retornó a la situación experimental inicial.
+  
+  # Distribución normal
+  
+  # La distribución de una variable normal está completamente determinada por dos parámetros, su media y su desviación estándar, denotadas normalmente por alfa y omega. La distribución normal también llamada distribución gaussiana, es importante debido a la frecuencia con distintas variables asociadas a fenómenos naturales y cotidianos: Caracteres morfológicos (como la talla o el peso), o psicológicos (como el cociente intelectual) son ejemplos de variables de las que se consideran que siguen una distribución normal.
+  © 2019 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Help
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
